@@ -1,0 +1,145 @@
+once we click on the canva on browser then internal script will call
+
+with a token 
+https://api.fedex.com/partners/fedexoffice/v1/canva/usertokens 
+
+and gets the response
+
+
+{transactionId: "dd4f8502-a104-4bfd-aead-d4620c7ae07c", output: {userTokenDetail: {,…}}}
+output: {userTokenDetail: {,…}}
+userTokenDetail: {,…}
+accessToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2Mjc1NTkxMTEsInN1YiI6IjQzMTEzNTVmLTI5Y2UtNDk2Mi1iZGI4LTMxZTY0ZjY0YzlmMiIsImlzcyI6Imc1TUtZNUVRLVROUEpNaV9tdnowcHVKRSIsImV4cCI6MTYyNzYwMjI1MX0.OxdN25uNAFBWnhigRrZraWnK5WsLVPrzYY4i_n8DiuY"
+clientId: "g5MKY5EQ-TNPJMi_mvz0puJE"
+expirationDateTime: "2021-07-29T23:44:11.955+0000"
+transactionId: "dd4f8502-a104-4bfd-aead-d4620c7ae07c"
+
+
+
+after second hand shake from canav angular will call 
+"https://api.fedex.com/partners/fedexoffice/v1/canva/products"
+this service with
+
+artworkId: "PA-AXrxtByoiXw8"
+fedexProductMappingId: "CVAFCD1068"
+previewURL: "https://partnership-artwork
+
+parameters 
+
+FXO-DoD-canva-user-service---->this service provides token to be used by canva.
+
+FXO-DoD-canva-Product-service--->in product service will have mappings
+
+this mapping useful for canva to understand what kinda services fedex provides like poster announcements etc
+with fedexproductmapping id.. can map with which service is applicable for the design sent by canva
+
+How canva will know about mapping ?
+(is canva requesting it from product-service directly) or these mapping is already shared with canva (canva database) ?
+
+
+When we upload a document then internally after selecting the pic it calls dunc services 
+==============================================================
+
+with localfile(binary) as requestpayload 
+
+https://dunc.fedex.com/document/fedexoffice/v1/documents
+
+dunc for file related operations
+
+then will get the response with following data
+
+
+documentId: "83440715716076634874717368521961888951503"
+documentName: "script.js - castles-responsive-parallax-landscape - Visual Studio Code 11_30_2020 10_53_41 AM.png"
+documentSize: 100507
+printReady: false
+successful: true
+
+
+once you add to cart then internally calls printready service is also part of Dunc API
+
+https://api.fedex.com/document/fedexoffice/v1/documents/83440715716076634874717368521961888951503/printready
+
+with following parameters
+
+defaultImageHeightInInches: "11"
+defaultImageWidthInInches: "8.5"
+lockContentOrientation: false
+minDPI: "150.0"
+targetHeightInInches: "11"
+targetWidthInInches: "8.5"
+
+where these default and target values are defined (hard coded or data base ) ?
+
+as response to the printready call 
+
+it gives converted image and preview url 
+with printread flag as true
+
+{"successful":true,
+"output":{"alerts":[{"code":"2060","message":"Upload Alert - Document Has Low Resolution"}],"document":{"parentDocumentId":"83440715716076634874717368521961888951503","originalDocumentName":"script.js - castles-responsive-parallax-landscape - Visual Studio Code 11_30_2020 10_53_41 AM.png","printReadyFlag":true,"previewURI":"https://dunc.fedex.com/document/fedexoffice/v1/documents/83440753291061091981010264918282120549383/preview","documentSize":87336,"documentType":"IMAGE","lowResImage":true,"documentId":"83440753291061091981010264918282120549383","metrics":{"pageCount":1,"pageGroups":[{"startPageNum":1,"endPageNum":1,"pageWidthInches":11.0,"pageHeightInches":8.5}]}}}}
+
+
+preview part is taking care by configurator which is part of UI
+
+ 
+
+then raterequest will happens with contentassociations
+
+https://api.fedex.com/rate/fedexoffice/v2/rates?cache=8894153602
+
+{rateRequest: {fedExAccountNumber: null, profileAccountId: null, site: null, products: [,…], recipients: null,…}
+coupons: []
+fedExAccountNumber: null
+loyaltyCode: null
+products: [,…]
+0: {productionContentAssociations: [], userProductName: "Brochures", id: "1463683693016", version: 1,…}
+contentAssociations: [{parentContentReference: "83440715716076634874717368521961888951503",…}]
+0: {parentContentReference: "83440715716076634874717368521961888951503",…}
+features: [{id: "1448981549109", name: "Paper Size", choice: {id: "1448986650332", name: "8.5x11",…}},…]
+0: {id: "1448981549109", name: "Paper Size", choice: {id: "1448986650332", name: "8.5x11",…}}
+1: {id: "1448981549741", name: "Paper Type", choice: {id: "1448988664295", name: "Laser(32 lb.)",…}}
+2: {id: "1448981549581", name: "Print Color", choice: {id: "1448988600611", name: "Full Color",…}}
+3: {id: "1448981549269", name: "Sides", choice: {id: "1448988124560", name: "Single-Sided",…}}
+4: {id: "1448984679218", name: "Orientation", choice: {id: "1449000016327", name: "Horizontal",…}}
+5: {id: "1448984877645", name: "Folding", choice: {id: "1448999722762", name: "Tri-Fold",…}}
+id: "1463683693016"
+instanceId: "0"
+isOutSourced: false
+name: "Brochures"
+pageExceptions: []
+priceable: true
+productionContentAssociations: []
+proofRequired: false
+properties: [{id: "1453242488328", name: "ZOOM_PERCENTAGE", value: "50"},…]
+0: {id: "1453242488328", name: "ZOOM_PERCENTAGE", value: "50"}
+1: {id: "1453243262198", name: "ENCODE_QUALITY", value: "100"}
+2: {id: "1453894861756", name: "LOCK_CONTENT_ORIENTATION", value: false}
+3: {id: "1453895478444", name: "MIN_DPI", value: "150.0"}
+4: {id: "1454950109636", name: "USER_SPECIAL_INSTRUCTIONS", value: null}
+5: {id: "1455050109636", name: "DEFAULT_IMAGE_WIDTH", value: "8.5"}
+6: {id: "1455050109631", name: "DEFAULT_IMAGE_HEIGHT", value: "11"}
+7: {id: "1464709502522", name: "PRODUCT_QTY_SET", value: "25"}
+8: {id: "1459784717507", name: "SKU", value: "40021"}
+9: {id: "1470151626854", name: "SYSTEM_SI",…}
+10: {id: "1494365340946", name: "PREVIEW_TYPE", value: "STATIC"}
+11: {id: "1470151737965", name: "TEMPLATE_AVAILABLE", value: "YES"}
+12: {id: "1459784776049", name: "PRICE", value: null}
+13: {id: "1490292304798", name: "MIGRATED_PRODUCT", value: "true"}
+qty: 25
+userProductName: "Brochures"
+version: 1
+profileAccountId: null
+recipients: null
+site: null
+specialInstructions: null
+validateContent: true}
+
+
+
+contentassociations depends on no of pages 
+
+
+once canva returns the image url with artworkId then have to download the image for showing it on configurator these services are in product service
+
+Product service will upload the image and make printreadt call and creates content associations.
